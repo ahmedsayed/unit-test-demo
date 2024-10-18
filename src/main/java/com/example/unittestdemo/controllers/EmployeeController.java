@@ -1,16 +1,21 @@
 package com.example.unittestdemo.controllers;
 
 import com.example.unittestdemo.controllers.apis.EmployeeApi;
+import com.example.unittestdemo.dtos.RequestDto;
 import com.example.unittestdemo.entities.Employee;
 import com.example.unittestdemo.services.EmployeeService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
+@Log4j2
 public class EmployeeController implements EmployeeApi {
 
     private final EmployeeService employeeService;
@@ -29,7 +34,8 @@ public class EmployeeController implements EmployeeApi {
     }
 
     @Override
-    public List<Employee> getAllEmployees() {
+    public List<Employee> getAllEmployees(RequestDto requestDto) {
+        log.info("requestDto => {}", requestDto.getSortDirection());
         return employeeService.getAllEmployees();
     }
 
@@ -48,5 +54,11 @@ public class EmployeeController implements EmployeeApi {
         employeeService.deleteEmployee(id);
         return new ResponseEntity<>("Employee deleted successfully!.", HttpStatus.OK);
 
+    }
+
+    @PostMapping("/status")
+    public ResponseEntity<String> setStatus(@RequestBody RequestDto request) {
+        // Process the status
+        return ResponseEntity.ok("Received direction: " + request.getSortDirection());
     }
 }
